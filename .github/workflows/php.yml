@@ -12,10 +12,14 @@ permissions:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
     - uses: actions/checkout@v4
+    - name: Setup PHP without any shared extensions except mbstring
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
 
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
