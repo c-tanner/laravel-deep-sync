@@ -1,4 +1,4 @@
-name: compatibility
+name: Laravel 9/10/11
 
 on:
   push:
