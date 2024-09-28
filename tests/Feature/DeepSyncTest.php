@@ -5,7 +5,9 @@ namespace CTanner\LaravelDeepSync\Tests\Feature;
 use CTanner\LaravelDeepSync\Tests\Models\User;
 use CTanner\LaravelDeepSync\Tests\Models\Post;
 use CTanner\LaravelDeepSync\Tests\Models\Site;
+use CTanner\LaravelDeepSync\Tests\Models\Subtask;
 use CTanner\LaravelDeepSync\Tests\Models\Tag;
+use CTanner\LaravelDeepSync\Tests\Models\Task;
 use CTanner\LaravelDeepSync\Tests\TestCase;
 
 class DeepSyncTest extends TestCase
@@ -137,6 +139,72 @@ class DeepSyncTest extends TestCase
         $this->assertEquals(1, User::find($users[0]->id)->is_active);
         $this->assertEquals(0, Post::find($post2->id)->is_active);
         $this->assertEquals(1, Post::find($post1->id)->is_active);
+    }
+
+    public function test_reverse_sync()
+    {
+        $task = Task::factory()->has(
+            Subtask::factory(3)->state(
+                function(array $attributes, Task $task) {
+                    return [
+                        'task_id' => $task->id
+                    ];
+                }
+            )
+        )->create();
+
+        $this->assertEquals(1, Task::count());
+        $this->assertEquals(3, Subtask::count());
+        $this->assertEquals(3, Task::find($task->id)->subtasks()->count());
+
+        // Task only becomes complete when all subtasks are complete
+        
+        $subtask1 = Subtask::find(1);
+        $subtask1->update(['is_complete' => 1]);
+
+        $this->assertEquals(0, Task::find($task->id)->is_complete);
+
+        $subtask2 = Subtask::find(2);
+        $subtask2->update(['is_complete' => 1]);
+
+        $this->assertEquals(0, Task::find($task->id)->is_complete);
+
+        $subtask3 = Subtask::find(3);
+        $subtask3->update(['is_complete' => 1]);
+
+        $this->assertEquals(1, Task::find($task->id)->is_complete);
+        
+    }
+
+    public function test_reverse_delete()
+    {
+        $task = Task::factory()->has(
+            Subtask::factory(3)->state(
+                function(array $attributes, Task $task) {
+                    return [
+                        'task_id' => $task->id
+                    ];
+                }
+            )
+        )->create();
+
+        $this->assertEquals(1, Task::count());
+        $this->assertEquals(3, Subtask::count());
+        $this->assertEquals(3, Task::find($task->id)->subtasks()->count());
+
+        // Task only becomes complete when all subtasks are complete
+        
+        Subtask::find(1)->delete();
+
+        $this->assertNotNull(Task::find($task->id));
+
+        Subtask::find(2)->delete();
+
+        $this->assertNotNull(Task::find($task->id));
+
+        Subtask::find(3)->delete();
+
+        $this->assertNull(Task::find($task->id));   
     }
     
 }
