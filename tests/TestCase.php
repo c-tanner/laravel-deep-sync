@@ -3,6 +3,8 @@
 namespace CTanner\LaravelDeepSync\Tests;
 
 use CTanner\LaravelDeepSync\Providers\DeepSyncProvider;
+use CTanner\LaravelDeepSync\Tests\Models\Post;
+use CTanner\LaravelDeepSync\Tests\Models\User;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
@@ -12,7 +14,6 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
         $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
         $this->artisan('migrate', ['--database' => 'testbench'])->run();
-
     }
 
     /**

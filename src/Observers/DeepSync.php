@@ -121,7 +121,7 @@ class DeepSync implements ShouldHandleEventsAfterCommit
                         $this->logger(json_encode($item));
                     });
 
-                    $callback($parents, $child, false);
+                    $callback($parents, $child);
 
                 } else {
 
@@ -137,31 +137,20 @@ class DeepSync implements ShouldHandleEventsAfterCommit
      *
      * @param Collection $parents A collection of parent models to check
      * @param Model $childRecord The related child record to delete
-     * @param bool $hydrateParent Whether or not we need to fetch the parent record from CurriculumMapListType metadata
      *
      * @return void
      */
-    private function handleDelete(Collection $parents, Model $childRecord, bool $hydrateParent): void
+    private function handleDelete(Collection $parents, Model $childRecord): void
     {
-        $parents->each(function($parent) use ($hydrateParent) {
-
-            $parentRecord = ($hydrateParent)
-                ? app($parent->model_type)->find($parent->parent_id)
-                : $parent;
-
-            if ($parentRecord) {
-                // Short-circuit on the first live parent
-                if ($parentRecord->deleted_at === null) {
-                    return;
-                }
-            }
-
+        $parents->filter(function($parent) {
+            return $parent->deleted_at === null;
         });
 
-        // If all parents are deleted, delete child
-        $this->logger(get_class($childRecord) . " (ID: $childRecord->id) has no more live parents, deleting..");
-        
-        $childRecord->delete();
+        if (!count($parents)) {
+            // If all parents are deleted, delete child
+            $this->logger(get_class($childRecord) . " (ID: $childRecord->id) has no more live parents, deleting..");
+            $childRecord->delete();
+        }
     }
 
     /**
@@ -169,37 +158,30 @@ class DeepSync implements ShouldHandleEventsAfterCommit
      *
      * @param Collection $parents A collection of parent models to check
      * @param Model $childRecord The related child record to modify
-     * @param bool $hydrateParent Controls whether the parent record will be hydrated from object metadata
      *
      * @return void
      */
-    private function handleStateChange(Collection $parents, Model $childRecord, bool $hydrateParent): void
+    private function handleStateChange(Collection $parents, Model $childRecord): void
     {
         // Normalize 0/false/null
         $triggerValue = !!$this->triggerObj->{$this->syncProperty} ? 1 : 0;
 
-        $parents->each(function($parent) use ($hydrateParent, $triggerValue) {
-
-            $parentRecord = ($hydrateParent)
-                ? app($parent->model_type)->find($parent->parent_id)
-                : $parent;
+        $parents->each(function($parent) use ($triggerValue) {
 
             $this->logger('Checking parent status for: ' . json_encode($parent));
 
-            if ($parentRecord) {
+            // Normalize 0/false/null
+            $parentValue = !!$parent->{$this->syncProperty} ? 1 : 0;
 
-                // Normalize 0/false/null
-                $parentValue = !!$parentRecord->{$this->syncProperty} ? 1 : 0;
-
-                // Short-circuit on the first non-homogenous match
-                if ($parentValue !== $triggerValue) {
-                    $this->logger(
-                        "short circuit: parent $this->syncProperty value ($parentValue) ".
-                        " does not equal trigger object value ($triggerValue)"
-                    );
-                    return;
-                }
+            // Short-circuit on the first non-homogenous match
+            if ($parentValue !== $triggerValue) {
+                $this->logger(
+                    "short circuit: parent $this->syncProperty value ($parentValue) ".
+                    " does not equal trigger object value ($triggerValue)"
+                );
+                return;
             }
+
         });
 
         // If all parents share the same status, sync child
@@ -260,7 +242,7 @@ class DeepSync implements ShouldHandleEventsAfterCommit
                     ...$model->$methodName()->get()
                 ];
             });
-
+            
         return collect($relatedItems);
     }
 }
