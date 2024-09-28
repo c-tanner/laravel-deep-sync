@@ -84,7 +84,7 @@ Though this example uses delete actions as an example, this concept applies to a
 
 ## Omnidirectional syncs
 
-Because we can define the direction of `SyncFrom` and `SyncTo` independent of our actual class hierarchy, a pretty neat feature becomes available:
+Because we can define the direction of `SyncFrom` and `SyncTo` independent of our actual class hierarchy, a pretty neat feature becomes available.
 
 Let's say we have two models, `Task` and `Subtask`. The class hierarchy is as you would expect:
 
@@ -119,6 +119,8 @@ class Task extends Model
     }
 }
 ```
+
+Note that we are using the `#[SyncFrom]` attribute on the "parent" class here instead of `#[SyncTo]`.
 
 And in our `Subtask` class:
 
