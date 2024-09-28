@@ -1,4 +1,4 @@
-name: Laravel >= 10
+name: Laravel 10/11
 
 on:
   push:
