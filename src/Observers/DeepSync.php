@@ -166,8 +166,7 @@ class DeepSync implements ShouldHandleEventsAfterCommit
         // Normalize 0/false/null
         $triggerValue = !!$this->triggerObj->{$this->syncProperty} ? 1 : 0;
 
-        $parents->each(function($parent) use ($triggerValue) {
-
+        foreach ($parents as $parent) {
             $this->logger('Checking parent status for: ' . json_encode($parent));
 
             // Normalize 0/false/null
@@ -181,8 +180,7 @@ class DeepSync implements ShouldHandleEventsAfterCommit
                 );
                 return;
             }
-
-        });
+        }
 
         // If all parents share the same status, sync child
         $this->logger(
