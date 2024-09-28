@@ -31,7 +31,7 @@ jobs:
           php-version: ${{ matrix.php }}
       - name: Install dependencies
         run: |
-            composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+            composer require "laravel/framework:${{ matrix.laravel }}" --no-interaction --no-update
             composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
       - name: Run tests
         run: vendor/bin/phpunit --testsuite=Feature --colors=always
