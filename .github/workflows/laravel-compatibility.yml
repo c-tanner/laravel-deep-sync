@@ -1,4 +1,4 @@
-name: Laravel 9/10/11
+name: Laravel 10/11
 
 on:
   push:
@@ -16,12 +16,9 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        laravel: [9.*, 10.*, 11.*]
+        laravel: [10.*, 11.*]
         dependency-version: [prefer-lowest, prefer-stable]
         include:
-        - laravel: 9.*
-          testbench: 7.*
-          canvas: 7.*
         - laravel: 10.*
           testbench: 8.*
           canvas: 8.*
