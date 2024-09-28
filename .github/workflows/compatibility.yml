@@ -1,0 +1,44 @@
+name: compatibility
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [8.0, 8.1, 8.2]
+        laravel: [9.*, 10.*, 11.*]
+        dependency-version: [prefer-lowest, prefer-stable]
+        include:
+        - laravel: 9.*
+          testbench: 7.*
+          canvas: 7.*
+          phpunit: 9.*
+        - laravel: 10.*
+          testbench: 8.*
+          canvas: 8.*
+          phpunit: 10.*
+        - laravel: 11.*
+          testbench: 9.*
+          canvas: 9.*
+          phpunit: 11.*
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+      - name: Install dependencies
+        run: |
+            composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+            composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-suggest

@@ -23,8 +23,8 @@
         }
     },
     "require": {
-        "php": "^8.2",
-        "illuminate/support": "^11"
+        "php": "^8",
+        "illuminate/support": "^9|^10|^11"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -41,10 +41,10 @@
         }
     },
     "require-dev": {
-        "laravel/pint": "^1.18",
-        "orchestra/canvas": "^9.1",
-        "orchestra/testbench": "^9.5",
-        "phpunit/phpunit": "^11.3"
+        "laravel/pint": "^1",
+        "orchestra/canvas": "^7|^8|^9.1",
+        "orchestra/testbench": "^7|^8|^9.5",
+        "phpunit/phpunit": "^9|^10|^11.3"
     },
     "scripts": {
         "post-autoload-dump": [],
