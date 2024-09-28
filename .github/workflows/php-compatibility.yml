@@ -12,7 +12,7 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-20.04
-    name: Laravel ${{ matrix.laravel }}
+    name: PHP ${{ matrix.php }}
     strategy:
       fail-fast: true
       matrix:
