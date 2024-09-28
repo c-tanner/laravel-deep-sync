@@ -80,6 +80,10 @@ For many-to-many or many-to-one relationships, DeepSync only updates child recor
 
 In the example above, we can see that when User A is deleted, Post A is also deleted, as User A is it's only parent. Since Post B, even though it also related to User A, is also related to User B. Since User B is a "live" parent, Post B remains unchanged.
 
+DeepSync relationships cascade, and will traverse to as many levels as are defined:
+
+![example multi-level relationship diagram](https://github.com/c-tanner/laravel-deep-sync/blob/main/doc/relationship-example-2.png)
+
 Though this example uses delete actions as an example, this concept applies to all DeepSync attributes.
 
 ## Omnidirectional syncs
