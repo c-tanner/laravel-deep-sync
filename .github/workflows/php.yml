@@ -36,5 +36,13 @@ jobs:
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
 
+    - name: Create Database
+      run: |
+        mkdir -p database
+        touch database/database.sqlite
+
     - name: Run tests
+      env:
+        DB_CONNECTION: sqlite
+        DB_DATABASE: database/database.sqlite
       run: vendor/bin/phpunit --testsuite=Feature --colors=always
