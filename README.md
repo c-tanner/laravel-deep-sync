@@ -8,6 +8,10 @@ Elegantly sync properties across any relationship.
 
 ## Installation
 
+Requirements:
+- PHP >= 8.2
+- Laravel >= 10
+
 `composer require c-tanner/laravel-deep-sync`
 
 ## Beyond cascading soft deletes
