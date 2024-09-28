@@ -84,7 +84,7 @@ DeepSync relationships cascade, and will traverse to as many levels as are defin
 
 ![example multi-level relationship diagram](https://github.com/c-tanner/laravel-deep-sync/blob/main/doc/relationship-example-2.png)
 
-Though this example uses delete actions as an example, this concept applies to all DeepSync attributes.
+Though these examples use delete actions for ease of demonstration, these concepts apply to all DeepSync attributes.
 
 ## Omnidirectional syncs
 
