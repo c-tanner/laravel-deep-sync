@@ -6,7 +6,7 @@ use CTanner\LaravelDeepSync\Attributes\SyncFrom;
 use CTanner\LaravelDeepSync\Tests\Models\Post;
 use CTanner\LaravelDeepSync\Attributes\SyncTo;
 use CTanner\LaravelDeepSync\Observers\DeepSync;
-use CTanner\LaravelDeepSync\Tests\Database\Factories\UserFactory;
+use CTanner\LaravelDeepSync\Tests\database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
