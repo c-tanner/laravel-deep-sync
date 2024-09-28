@@ -17,7 +17,6 @@ jobs:
       fail-fast: true
       matrix:
         php: [8.2, 8.3]
-        dependency-version: [prefer-lowest, prefer-stable]
         include:
         - php: 8.2
           laravel: 10.*
@@ -34,6 +33,6 @@ jobs:
       - name: Install dependencies
         run: |
             composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
-            composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
+            composer update --prefer-dist --no-interaction
       - name: Run tests
         run: vendor/bin/phpunit --testsuite=Feature --colors=always
