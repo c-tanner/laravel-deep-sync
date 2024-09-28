@@ -18,7 +18,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "CTanner\\LaravelDeepSync\\Tests\\": "tests/"
+            "CTanner\\LaravelDeepSync\\Tests\\": "tests/",
+            "CTanner\\LaravelDeepSync\\Tests\\Database\\": "tests/database/"
         }
     },
     "require": {
