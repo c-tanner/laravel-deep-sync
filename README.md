@@ -150,7 +150,7 @@ class Subtask extends Model
 Now let's test it:
 
 ```php
-public function test_reverse_delete()
+public function test_reverse_sync()
 {
     $task = Task::factory()->has(
         Subtask::factory(3)->state(
@@ -168,17 +168,21 @@ public function test_reverse_delete()
 
     // Task only becomes complete when all subtasks are complete
     
-    Subtask::find(1)->delete();
+    $subtask1 = Subtask::find(1);
+    $subtask1->update(['is_complete' => 1]);
 
-    $this->assertNotNull(Task::find($task->id));
+    $this->assertEquals(0, Task::find($task->id)->is_complete);
 
-    Subtask::find(2)->delete();
+    $subtask2 = Subtask::find(2);
+    $subtask2->update(['is_complete' => 1]);
 
-    $this->assertNotNull(Task::find($task->id));
+    $this->assertEquals(0, Task::find($task->id)->is_complete);
 
-    Subtask::find(3)->delete();
+    $subtask3 = Subtask::find(3);
+    $subtask3->update(['is_complete' => 1]);
 
-    $this->assertNull(Task::find($task->id));   
+    $this->assertEquals(1, Task::find($task->id)->is_complete);
+    
 }
 ```
 
