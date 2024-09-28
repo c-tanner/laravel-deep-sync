@@ -12,6 +12,6 @@ class DeepSyncProvider extends ServiceProvider
     {
         $this->publishes([
             __DIR__.'/../config/deepsync.php' => config_path('deepsync.php'),
-        ]);
+        ], 'deepsync');
     }
 }
