@@ -202,6 +202,6 @@ OK (1 test, 6 assertions)
 
 ## Configuration
 
-Ironically, Observers in Laravel aren't very observable (I think that's the irony, right?). This can make debugging quite difficult, so DeepSync comes with verbose logging configured by default, output to your application's default log channel. You can turn logging off, or change the log severity by publishing the configuration file:
+Ironically, Observers in Laravel aren't very observable (I think that's what irony is, right?). This can make debugging quite difficult, so DeepSync comes with verbose logging configured by default, output to your application's default log channel. You can turn logging off, or change the log severity by publishing the configuration file:
 
 `php artisan vendor:publish --tag=deepsync`
