@@ -12,11 +12,10 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-20.04
-    name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
+    name: Laravel ${{ matrix.laravel }}
     strategy:
       fail-fast: true
       matrix:
-        php: [8.0, 8.1, 8.2]
         laravel: [9.*, 10.*, 11.*]
         dependency-version: [prefer-lowest, prefer-stable]
         include:
@@ -37,7 +36,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
+          php-version: 8.1
       - name: Install dependencies
         run: |
             composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
