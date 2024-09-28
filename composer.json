@@ -1,6 +1,6 @@
 {
     "name": "c-tanner/laravel-deep-sync",
-    "description": "Elegantly sync attributes across any relationship",
+    "description": "Elegantly sync properties across any relationship",
     "version": "0.1.0",
     "type": "library",
     "license": "MIT",
