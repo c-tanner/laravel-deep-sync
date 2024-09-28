@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace CTanner\LaravelDeepSync\Observers;
 
-use App\Attributes\CascadeFrom;
-use App\Attributes\CascadeTo;
+use CTanner\LaravelDeepSync\Attributes\SyncFrom;
+use CTanner\LaravelDeepSync\Attributes\SyncTo;
 use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -16,18 +16,37 @@ use Illuminate\Support\Facades\Log;
 class DeepSync implements ShouldHandleEventsAfterCommit
 {
     private $triggerObj;
+    private $logEnabled;
+    private $logLevel;
+    private $syncProperty;
 
-    public function __construct($triggerObj)
+    public function __construct()
     {
-        $this->triggerObj = $triggerObj;
+        $this->logEnabled = config('deepsync.logging.enabled');
+        $this->logLevel = config('deepsync.logging.log_level');
 
-        // Add context to log entries for traceability
-        Context::add('metadata', [
-            'source'    => 'DeepSync',
-            'trigger'   => get_class($this->triggerObj),
-            'objId'     => $this->triggerObj->id,
-            'traceId'   => Str::uuid()->toString()
-        ]);
+        if ($this->logEnabled) {
+            Context::add('meta', [
+                'source'    => get_class($this),
+                'traceId'   => Str::uuid()->toString()
+            ]);
+        }
+    }
+
+    /**
+     * Log a message if enabled
+     * 
+     * @param string $msg The log message
+     * 
+     * @return void
+     */
+    private function logger(string $msg): void
+    {
+        if (!$this->logEnabled) {
+            return;
+        }
+
+        Log::{$this->logLevel}($msg);
     }
 
     /**
@@ -39,24 +58,22 @@ class DeepSync implements ShouldHandleEventsAfterCommit
      */
     public function saved(Model $triggerObj): void
     {
-        // $this->triggerObj = $triggerObj;
-
-        if (!$this->triggerObj->syncable) {
+        if (!$triggerObj->syncable) {
             return;
         }
 
-        foreach ($this->triggerObj->syncable as $property => $targetValue) {
+        $this->triggerObj = $triggerObj;
+
+        foreach ($this->triggerObj->syncable as $property) {
+
+            $this->syncProperty = $property;
 
             // Only trigger if the object is moving to the desired state
+            if ($this->triggerObj->$property !== $this->triggerObj->getOriginal($property)) {
 
-            if (
-                $this->triggerObj->$property == $targetValue 
-                && $this->triggerObj->getOriginal($property) !== $targetValue
-            ) {
+                $this->logger(get_class($this->triggerObj) ." (ID: {$this->triggerObj->id}) triggered a sync event ($property)");
 
-                $this->logger(get_class($this->triggerObj) ." (ID: {$this->triggerObj->id}) triggered a sync event");
-
-                $this->handleAction('handleStateChange');
+                $this->reflectionIterator([$this, 'handleStateChange']);
             }
 
         }
@@ -75,40 +92,8 @@ class DeepSync implements ShouldHandleEventsAfterCommit
 
         $this->logger(get_class($this->triggerObj) . " (ID: $triggerObj->id) triggered a deletion event");
 
-        $this->handleAction('handleDelete');
-    }
-
-    /**
-     * Log a message if enabled
-     * 
-     * @param string $msg The log message
-     * 
-     * @return void
-     */
-    public function logger(string $msg): void
-    {
-        if (!config('deepsync.logging.enabled')) {
-            return;
-        }
-
-        $logLevel = config('deepsync.logging.log_level', 'debug');
-
-        Log::$logLevel($msg);
-    }
-
-    /**
-     * Determines how to handle the event based on the Model type
-     *
-     * @param string $actionType The action type
-     * @param Model $triggerObj The Model object triggering the event
-     *
-     * @return void
-     */
-    private function handleAction(string $actionType): void
-    {
-        $this->logger("Beginning reflectionIterator for ". get_class($this->triggerObj) ." ...");
-
-        $this->reflectionIterator([$this, $actionType]);
+        $this->reflectionIterator([$this, 'handleDelete']);
+        
     }
 
     /**
@@ -120,6 +105,8 @@ class DeepSync implements ShouldHandleEventsAfterCommit
      */
     private function reflectionIterator(callable $callback): void
     {
+        $this->logger("Beginning reflectionIterator for ". get_class($this->triggerObj) ." ...");
+
         if ($children = $this->getChildrenByReflection($this->triggerObj)) {
 
             $children->each(function($child) use ($callback) {
@@ -172,28 +159,26 @@ class DeepSync implements ShouldHandleEventsAfterCommit
         });
 
         // If all parents are deleted, delete child
-
         $this->logger(get_class($childRecord) . " (ID: $childRecord->id) has no more live parents, deleting..");
         
         $childRecord->delete();
     }
 
     /**
-     * Handles active status changes on children if all parents share the same status
+     * Handle state changes on child record if all parents share the same status
      *
      * @param Collection $parents A collection of parent models to check
      * @param Model $childRecord The related child record to modify
      * @param bool $hydrateParent Controls whether the parent record will be hydrated from object metadata
-     * @param Model $triggerObj The model triggering the event
      *
      * @return void
      */
     private function handleStateChange(Collection $parents, Model $childRecord, bool $hydrateParent): void
     {
-        // Handle 0/false/null
-        $triggerIsActiveValue = !!$this->triggerObj->is_active ? 1 : 0;
+        // Normalize 0/false/null
+        $triggerValue = !!$this->triggerObj->{$this->syncProperty} ? 1 : 0;
 
-        $parents->each(function($parent) use ($hydrateParent, $triggerIsActiveValue) {
+        $parents->each(function($parent) use ($hydrateParent, $triggerValue) {
 
             $parentRecord = ($hydrateParent)
                 ? app($parent->model_type)->find($parent->parent_id)
@@ -203,14 +188,14 @@ class DeepSync implements ShouldHandleEventsAfterCommit
 
             if ($parentRecord) {
 
-                // Handle 0/false/null
-                $parentIsActiveValue = !!$parentRecord->is_active ? 1 : 0;
+                // Normalize 0/false/null
+                $parentValue = !!$parentRecord->{$this->syncProperty} ? 1 : 0;
 
                 // Short-circuit on the first non-homogenous match
-                if ($parentIsActiveValue !== $triggerIsActiveValue) {
+                if ($parentValue !== $triggerValue) {
                     $this->logger(
-                        'short circuit: parent is_active value ' . $parentIsActiveValue .
-                        ' does not equal trigger object is_active value ' . $triggerIsActiveValue
+                        "short circuit: parent $this->syncProperty value ($parentValue) ".
+                        " does not equal trigger object value ($triggerValue)"
                     );
                     return;
                 }
@@ -219,11 +204,11 @@ class DeepSync implements ShouldHandleEventsAfterCommit
 
         // If all parents share the same status, sync child
         $this->logger(
-            'All parents share same is_active value (' . $triggerIsActiveValue . '), syncing "' .
-            get_class($childRecord) . " (ID: $childRecord->id).."
+            "All parents share same $this->syncProperty value ($triggerValue), syncing " .
+            get_class($this->triggerObj) . " (ID: $this->triggerObj->id).."
         );
 
-        $childRecord->update(['is_active' => 0]);
+        $childRecord->update([$this->syncProperty => $triggerValue]);
     }
 
     /**
@@ -233,7 +218,7 @@ class DeepSync implements ShouldHandleEventsAfterCommit
      */
     private function getChildrenByReflection(Model $model): Collection
     {
-        return $this->reflector($model, CascadeTo::class);
+        return $this->reflector($model, SyncTo::class);
     }
 
     /**
@@ -243,7 +228,7 @@ class DeepSync implements ShouldHandleEventsAfterCommit
      */
     private function getParentsByReflection(Model $model): Collection
     {
-        return $this->reflector($model, CascadeFrom::class);
+        return $this->reflector($model, SyncFrom::class);
     }
 
     /**

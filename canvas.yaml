@@ -1,26 +1,26 @@
 preset: package
 
-namespace: CTanner\DeepSync
+namespace: CTanner\LaravelDeepSync
 
 paths:
   src: src
   resource: resources
 
 factory:
-  path: tests/Database/factories
+  path: tests/database/Factories
 
 migration:
-  path: tests/Database/migrations
+  path: tests/database/migrations
   prefix: ''
 
 console:
-  namespace: CTanner\DeepSync\Console
+  namespace: CTanner\LaravelDeepSync\Console
 
 model:
-  namespace: CTanner\DeepSync\tests\Models
+  namespace: CTanner\LaravelDeepSync\Tests\Models
 
 provider:
-  namespace: CTanner\DeepSync\Providers
+  namespace: CTanner\LaravelDeepSync\Providers
 
 testing:
-  namespace: CTanner\DeepSync\tests
+  namespace: CTanner\LaravelDeepSync\Tests

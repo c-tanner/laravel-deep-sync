@@ -1,6 +1,6 @@
 <?php
 
-namespace CTanner\DeepSync\tests\Models;
+namespace CTanner\LaravelDeepSync\Tests\Models;
 
 use CTanner\LaravelDeepSync\Attributes\SyncFrom;
 use CTanner\LaravelDeepSync\Attributes\SyncTo;

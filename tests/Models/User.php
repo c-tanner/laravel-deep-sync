@@ -2,7 +2,7 @@
 
 namespace CTanner\LaravelDeepSync\Tests\Models;
 
-use CTanner\DeepSync\tests\Models\Post;
+use CTanner\LaravelDeepSync\tests\Models\Post;
 use CTanner\LaravelDeepSync\Attributes\SyncTo;
 use CTanner\LaravelDeepSync\Observers\DeepSync;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[ObservedBy([new DeepSync(User::class)])]
+#[ObservedBy([DeepSync::class])]
 class User extends Model
 {
     use HasFactory;
@@ -23,11 +23,9 @@ class User extends Model
     ];
 
     /**
-     * DeepSync properties and trigger values
+     * Properties that trigger DeepSync
      */
-    protected $syncable = [
-        'is_active' => 0
-    ];
+    protected $syncable = ['is_active'];
 
     #[SyncTo]
     public function posts(): HasMany

@@ -1,48 +1,56 @@
 {
-  "name": "c-tanner/laravel-deep-sync",
-  "description": "Elegantly sync attributes across any relationship",
-  "version": "0.1.0",
-  "type": "library",
-  "license": "MIT",
-  "authors": [
-    {
-      "role": "Developer",
-      "name": "Chris Tanner",
-      "email": "ctanneraudio@gmail.com",
-      "homepage": "https://www.github.com/c-tanner"
+    "name": "c-tanner/laravel-deep-sync",
+    "description": "Elegantly sync attributes across any relationship",
+    "version": "0.1.0",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "role": "Developer",
+            "name": "Chris Tanner",
+            "email": "ctanneraudio@gmail.com",
+            "homepage": "https://www.github.com/c-tanner"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "CTanner\\LaravelDeepSync\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "CTanner\\LaravelDeepSync\\Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": "^8.1",
+        "illuminate/support": "^11.25"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true,
+        "preferred-install": "dist",
+        "optimize-autoloader": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "CTanner\\LaravelDeepSync\\Providers\\DeepSyncProvider"
+            ]
+        }
+    },
+    "require-dev": {
+        "laravel/pint": "^1.18",
+        "orchestra/canvas": "^9.1",
+        "orchestra/testbench": "^9.5",
+        "phpunit/phpunit": "^11.3"
+    },
+    "scripts": {
+        "post-autoload-dump": [],
+        "lint": [
+            "@php vendor/bin/pint --ansi",
+            "@php vendor/bin/phpstan analyse --verbose --ansi"
+        ]
     }
-  ],
-  "autoload": {
-    "psr-4": {
-      "CTanner\\LaravelDeepSync\\": "src/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "CTanner\\LaravelDeepSync\\Tests\\": "tests/"
-    }
-  },
-  "require": {
-    "php": "^8.1",
-    "illuminate/support": "^11.25"
-  },
-  "minimum-stability": "dev",
-  "prefer-stable": true,
-  "config": {
-    "sort-packages": true,
-    "preferred-install": "dist",
-    "optimize-autoloader": true
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "CTanner\\LaravelDeepSync\\Providers\\DeepSyncProvider"
-      ]
-    }
-  },
-  "require-dev": {
-    "laravel/pint": "^1.18",
-    "orchestra/canvas": "^9.1",
-    "orchestra/testbench": "^9.5"
-  }
 }
