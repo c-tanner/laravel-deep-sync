@@ -4,7 +4,7 @@
 
 Elegantly sync properties across any relationship.
 
-## More than just cascading soft deletes
+## Beyond cascading soft deletes
 
 Cascading soft-deletes within Laravel has been covered by a number of great packages in the past. At it's core, though, `deleted_at` is just another class property. 
 
