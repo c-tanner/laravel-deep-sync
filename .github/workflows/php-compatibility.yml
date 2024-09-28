@@ -23,12 +23,10 @@ jobs:
           laravel: 10.*
           testbench: 8.*
           canvas: 8.*
-          phpunit: 10.*
         - php: 8.3
           laravel: 11.*
           testbench: 9.*
           canvas: 9.*
-          phpunit: 11.*
     steps:
       - uses: actions/checkout@v4
       - name: Setup PHP
