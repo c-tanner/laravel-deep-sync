@@ -7,10 +7,10 @@ paths:
   resource: resources
 
 factory:
-  path: tests/database/Factories
+  path: tests/Database/Factories
 
 migration:
-  path: tests/database/migrations
+  path: tests/Database/migrations
   prefix: ''
 
 console:

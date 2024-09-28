@@ -9,4 +9,9 @@
             <directory>tests/Feature</directory>
         </testsuite>
     </testsuites>
+    <source>
+        <include>
+            <directory>src</directory>
+        </include>
+    </source>
 </phpunit>
