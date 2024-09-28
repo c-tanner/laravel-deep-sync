@@ -17,12 +17,16 @@ class DeepSync implements ShouldHandleEventsAfterCommit
 {
     private $triggerObj;
 
-    public function __construct()
+    public function __construct($triggerObj)
     {
+        $this->triggerObj = $triggerObj;
+
         // Add context to log entries for traceability
         Context::add('metadata', [
-            'source' => get_class($this),
-            'traceId' => Str::uuid()->toString()
+            'source'    => 'DeepSync',
+            'trigger'   => get_class($this->triggerObj),
+            'objId'     => $this->triggerObj->id,
+            'traceId'   => Str::uuid()->toString()
         ]);
     }
 
@@ -35,15 +39,25 @@ class DeepSync implements ShouldHandleEventsAfterCommit
      */
     public function saved(Model $triggerObj): void
     {
-        $this->triggerObj = $triggerObj;
+        // $this->triggerObj = $triggerObj;
 
-        // Only trigger if the model is moving to the desired state
+        if (!$this->triggerObj->syncable) {
+            return;
+        }
 
-        if ($triggerObj->is_active == 0 && $triggerObj->getOriginal('is_active') == 1) {
+        foreach ($this->triggerObj->syncable as $property => $targetValue) {
 
-            $this->logger(get_class($triggerObj) ." (ID: $triggerObj->id) triggered a sync event");
+            // Only trigger if the object is moving to the desired state
 
-            $this->handleAction('handleStatusChange');
+            if (
+                $this->triggerObj->$property == $targetValue 
+                && $this->triggerObj->getOriginal($property) !== $targetValue
+            ) {
+
+                $this->logger(get_class($this->triggerObj) ." (ID: {$this->triggerObj->id}) triggered a sync event");
+
+                $this->handleAction('handleStateChange');
+            }
 
         }
     }
@@ -174,7 +188,7 @@ class DeepSync implements ShouldHandleEventsAfterCommit
      *
      * @return void
      */
-    private function handleStatusChange(Collection $parents, Model $childRecord, bool $hydrateParent): void
+    private function handleStateChange(Collection $parents, Model $childRecord, bool $hydrateParent): void
     {
         // Handle 0/false/null
         $triggerIsActiveValue = !!$this->triggerObj->is_active ? 1 : 0;

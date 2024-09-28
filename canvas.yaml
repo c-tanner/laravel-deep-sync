@@ -1,0 +1,26 @@
+preset: package
+
+namespace: CTanner\DeepSync
+
+paths:
+  src: src
+  resource: resources
+
+factory:
+  path: tests/Database/factories
+
+migration:
+  path: tests/Database/migrations
+  prefix: ''
+
+console:
+  namespace: CTanner\DeepSync\Console
+
+model:
+  namespace: CTanner\DeepSync\tests\Models
+
+provider:
+  namespace: CTanner\DeepSync\Providers
+
+testing:
+  namespace: CTanner\DeepSync\tests
