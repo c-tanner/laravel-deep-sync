@@ -44,3 +44,5 @@ jobs:
         run: |
             composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
             composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-suggest
+      - name: Run tests
+        run: vendor/bin/phpunit --testsuite=Feature --colors=always
