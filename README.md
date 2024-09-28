@@ -1,5 +1,5 @@
 [![build](https://github.com/c-tanner/laravel-deep-sync/actions/workflows/php.yml/badge.svg)](https://github.com/c-tanner/laravel-deep-sync/actions/workflows/php.yml)
-[![PHP >= 8.2](https://github.com/c-tanner/laravel-deep-sync/actions/workflows/php-compatibility.yml/badge.svg)](https://github.com/c-tanner/laravel-deep-sync/actions/workflows/php-compatibility.yml)
+[![PHP > 8.2](https://github.com/c-tanner/laravel-deep-sync/actions/workflows/php-compatibility.yml/badge.svg)](https://github.com/c-tanner/laravel-deep-sync/actions/workflows/php-compatibility.yml)
 
 # Laravel Deep Sync
 
