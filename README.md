@@ -138,7 +138,7 @@ class Task extends Model
 }
 ```
 
-Note that we are using the `#[SyncFrom]` attribute on the "parent" class here instead of `#[SyncTo]`.
+> Note that we are using the `#[SyncFrom]` attribute on the "parent" class here instead of `#[SyncTo]`.
 
 And in our `Subtask` class:
 
