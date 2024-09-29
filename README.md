@@ -82,19 +82,19 @@ DeepSync currently supports `saved()` and `deleted()` model events. Note that in
 
 ## Polymorphic support
 
-Cascading attributes in one-to-one or one-to-many relationships is straightforward: when the "parent" model changes state, DeepSync finds the "child" records using Eloquent relationship methods tagged with the `#[SyncTo]` attribute and updates the attribute to the same value. Child models are also inspected for their relationship methods, and the process continues down the tree.
+Cascading properties in one-to-one or one-to-many relationships is straightforward: when the "parent" model changes state, DeepSync finds the "child" records using Eloquent relationship methods tagged with the `#[SyncTo]` attribute and updates the property to the same value. Child models are also inspected for their relationship methods, and the process continues down the tree.
 
 For many-to-many or many-to-one relationships, DeepSync only updates child records _if all parents share the same state_.
 
 ![example relationship diagram](https://github.com/c-tanner/laravel-deep-sync/blob/main/doc/relationship-example-1.png)
 
-In the example above, we can see that when User A is deleted, Post A is also deleted, as User A is it's only parent. Since Post B, even though it also related to User A, is also related to User B. Since User B is a "live" parent, Post B remains unchanged.
+In the example above, we can see that when User A is deleted, Post A is also deleted, as User A is it's only parent. Since Post B, even though it also related to User A, is also related to User B, and therefore remains unchanged.
 
 DeepSync relationships cascade, and will traverse to as many levels as are defined:
 
 ![example multi-level relationship diagram](https://github.com/c-tanner/laravel-deep-sync/blob/main/doc/relationship-example-2.png)
 
-Though these examples use delete actions for ease of demonstration, these concepts apply to all DeepSync attributes.
+Though these examples use delete actions for ease of demonstration, these concepts apply to all class properties defined in the `syncable` array.
 
 ## Omnidirectional syncs
 
