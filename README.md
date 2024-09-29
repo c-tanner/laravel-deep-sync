@@ -63,9 +63,7 @@ class Post extends Model
         'is_active'
     ];
 
-    /**
-     * DeepSync properties and trigger values
-     */
+    // Properties that trigger DeepSync
     public $syncable = ['is_active'];
 
     #[SyncFrom]
