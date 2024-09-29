@@ -14,11 +14,13 @@ Requirements:
 
 `composer require c-tanner/laravel-deep-sync`
 
-## Beyond cascading soft deletes
+## More than just cascading soft-deletes
 
-Cascading soft-deletes within Laravel has been covered by a number of great packages in the past. At it's core, though, `deleted_at` is just another class property. 
+Cascading soft-deletes within Laravel has been covered by a number of great packages in the past. At its core, though, `deleted_at` is just another class property. 
 
-With DeepSync, you can assign any model property as `syncable` - and choose which models should follow suit:
+While DeepSync does offer native support for cascading / syncing soft-deletes, you can also assign _any_ model property as `syncable` - and choose which models should follow suit.
+
+Let's take the classic `User` / `Post` example:
 
 ```php
 #[ObservedBy([DeepSync::class])]
