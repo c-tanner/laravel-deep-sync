@@ -6,8 +6,6 @@
 
 Elegantly sync properties across any relationship.
 
-![example relationship diagram](https://github.com/c-tanner/laravel-deep-sync/blob/main/doc/relationship-example-multi.png)
-
 ## Installation
 
 Requirements:
