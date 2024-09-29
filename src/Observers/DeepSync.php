@@ -143,7 +143,8 @@ class DeepSync implements ShouldHandleEventsAfterCommit
     private function handleDelete(Collection $parents, Model $childRecord): void
     {
         $parents->filter(function($parent) {
-            return $parent->deleted_at === null;
+            $deletedAtColumn = $parent->getDeletedAtColumn();
+            return $parent->$deletedAtColumn === null;
         });
 
         if (!count($parents)) {
