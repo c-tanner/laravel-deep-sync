@@ -27,6 +27,8 @@ class Post extends Model
         'is_active'
     ];
 
+    const DELETED_AT = 'archive_date';
+
     /**
      * DeepSync properties and trigger values
      */
