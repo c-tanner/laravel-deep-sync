@@ -112,6 +112,8 @@ class Task {
 
 However, let's say that both classes have a property, `is_complete`, which defaults to `false`, and we want to automatically mark a `Task` complete only when all related `Subtasks` are also complete:
 
+![example reverse sync diagram](https://github.com/c-tanner/laravel-deep-sync/blob/main/doc/relationship-example-3.png)
+
 ```php
 #[ObservedBy([DeepSync::class])]
 class Task extends Model
